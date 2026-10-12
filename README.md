@@ -1,16 +1,72 @@
 # Kardivo
 
-Kardivo is a browser-based university ID card studio. A React/Vite frontend collects student details and a photograph, and a FastAPI backend renders a print-ready card (CR80, 54 x 86 mm) as PNG or PDF.
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?logo=opencv&logoColor=white)
+
+**A browser-based university ID card studio.** Enter student details, crop a photograph, and export a print-ready CR80 card (54 x 86 mm) as a 300 DPI PNG or a PDF. Nothing is stored on the server.
+
+Built as a full-stack project: a React/Vite frontend for data entry and photo editing, and a FastAPI backend that validates input and renders the card with Pillow, NumPy and OpenCV.
+
+## Why this project
+
+Registrar offices often produce ID cards by hand in design tools, which is slow and error-prone. Kardivo replaces that with a validated form, consistent layout and print-accurate output, and it handles sensitive student data without persisting it.
 
 ## Features
 
-- Guided student and institution data entry with inline validation
+- Guided student and institution data entry with inline validation on both client and server
 - Photo input by JPG/PNG upload or live camera capture
 - Crop, zoom and positioning controls, with optional face auto-centering and red-background replacement
 - Optional institution logo (defaults to the bundled college logo) and registrar signature
 - Card preview generated on demand, with zoom controls and an "Outdated" indicator when the form changes after generation
 - Export as 300 DPI PNG or a 54 x 86 mm PDF, or print directly from the browser
 - In-memory processing: uploaded images and generated cards are never written to disk
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/01-photo-crop.png" alt="Photo crop settings" width="720"><br>
+  <em>Photo crop and adjustment</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/02-form.png" alt="ID card data form" width="720"><br>
+  <em>Student and institution form</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/03-preview.png" alt="ID card preview" width="720"><br>
+  <em>Card preview workspace</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/04-generated-id-card.png" alt="Generated university ID card" width="260"><br>
+  <em>Generated ID card (sample data)</em>
+</p>
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[React UI<br/>form, camera, crop] -- multipart form --> B[FastAPI<br/>/api/generate]
+    B --> C[Validate fields<br/>and verify images]
+    C --> D[Photo pipeline<br/>face detect, crop, background]
+    D --> E[Pillow renderer<br/>300 DPI card]
+    E -- PNG --> A
+    A --> F[Client-side PDF<br/>54 x 86 mm]
+```
+
+## Technical highlights
+
+- **Face-aware cropping:** OpenCV Haar cascade finds the largest face and crops a 7:9 passport-ratio box around it. If OpenCV is unavailable, the card still renders and the API returns a warning.
+- **Background replacement:** samples the photo's edge pixels, takes the median colour, and builds a blurred colour-distance mask to swap the background for red.
+- **Signature cleanup:** scanned signatures on white paper are converted to transparent-background ink automatically.
+- **Adaptive layout:** text is fitted and word-wrapped to the card so long names, addresses and institution names never overflow.
+- **Dependency-free PDF export:** the frontend writes a single-page PDF of exactly 54 x 86 mm around the rendered image, with no PDF library.
+- **Defence in depth:** field validation runs in the browser and again on the server; uploads are verified with Pillow, type-checked (JPG/PNG only) and capped at 5 MB, and request bodies are size-limited.
+- **Privacy by design:** all processing happens in memory, responses use `Cache-Control: no-store`, and personal data is not logged.
 
 ## Tech stack
 
@@ -134,24 +190,18 @@ Validation errors return HTTP 422 with a per-field `errors` object. Non-fatal ph
 | Address | Required; max 120 characters |
 | Images | JPG or PNG, max 5 MB each |
 
-## Screenshots
+## Roadmap
 
-### Photo crop and adjustment
-
-![Photo crop settings](docs/screenshots/01-photo-crop.png)
-
-### Student and institution form
-
-![ID card data form](docs/screenshots/02-form.png)
-
-### Card preview workspace
-
-![ID card preview](docs/screenshots/03-preview.png)
-
-### Generated ID card
-
-![Generated university ID card](docs/screenshots/04-generated-id-card.png)
+- Automated tests for validation and card rendering
+- Docker Compose setup for one-command local run
+- Hosted demo deployment
+- Bulk generation from a CSV file
+- QR code or barcode for card verification
 
 ## Privacy
 
 The backend processes uploaded images and generated cards in memory only. It does not persist personal data, uploads or generated output to disk, and responses are sent with `Cache-Control: no-store`.
+
+## Author
+
+**Jiyanshu Jain** - [Portfolio](https://jiyanshu.dev) | [LinkedIn](https://www.linkedin.com/in/jiyanshu-jain) | [GitHub](https://github.com/jiyanshuj)
