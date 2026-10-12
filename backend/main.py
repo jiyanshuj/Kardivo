@@ -30,6 +30,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def health_check():
+    return {"status": "ok", "service": "kardivo-api"}
+
+
 class ApiError(Exception):
     def __init__(self, errors):
         self.errors = errors

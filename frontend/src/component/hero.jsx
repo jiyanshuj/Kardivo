@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Details from "./details";
 import { validate } from "./validation";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL || "https://kardivo.onrender.com";
 const CW = 280, CH = 360; // crop canvas (7:9 passport ratio)
 
 const EMPTY = {
