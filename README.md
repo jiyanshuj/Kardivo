@@ -10,6 +10,17 @@
 
 Built as a full-stack project: a React/Vite frontend for data entry and photo editing, and a FastAPI backend that validates input and renders the card with Pillow, NumPy and OpenCV.
 
+## Live deployment
+
+- **Frontend:** [kardivo-zeta.vercel.app](https://kardivo-zeta.vercel.app/)
+- **Backend health check:** [kardivo.onrender.com](https://kardivo.onrender.com/)
+- **Preview API:** `https://kardivo.onrender.com/api/preview`
+- **Generate API:** `https://kardivo.onrender.com/api/generate`
+
+The deployed frontend uses the Render backend as its API base URL. For a separate
+deployment, set `VITE_API_URL` to the backend URL and configure the backend
+`ALLOWED_ORIGINS` value with the frontend origin.
+
 ## Why this project
 
 Registrar offices often produce ID cards by hand in design tools, which is slow and error-prone. Kardivo replaces that with a validated form, consistent layout and print-accurate output, and it handles sensitive student data without persisting it.
@@ -149,7 +160,7 @@ Open `http://localhost:5173`.
 
 | Variable | Where | Default | Purpose |
 | --- | --- | --- | --- |
-| `VITE_API_URL` | Frontend | `http://localhost:8000` | Backend base URL |
+| `VITE_API_URL` | Frontend | `https://kardivo.onrender.com` | Backend base URL |
 | `ALLOWED_ORIGINS` | Backend | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated CORS origins |
 
 Example (PowerShell):
@@ -157,6 +168,13 @@ Example (PowerShell):
 ```powershell
 $env:VITE_API_URL = "http://localhost:8000"
 npm run dev
+```
+
+For the deployed services, use:
+
+```text
+VITE_API_URL=https://kardivo.onrender.com
+ALLOWED_ORIGINS=https://kardivo-zeta.vercel.app,http://localhost:5173,http://127.0.0.1:5173
 ```
 
 ## Frontend commands
@@ -194,7 +212,6 @@ Validation errors return HTTP 422 with a per-field `errors` object. Non-fatal ph
 
 - Automated tests for validation and card rendering
 - Docker Compose setup for one-command local run
-- Hosted demo deployment
 - Bulk generation from a CSV file
 - QR code or barcode for card verification
 
