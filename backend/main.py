@@ -21,10 +21,20 @@ DEFAULT_ADDR = "Ujjain Road, Indore - 453111"
 BLOOD = {"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 
 app = FastAPI(title="University ID Card Generator", docs_url=None, redoc_url=None)
+
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    if origin.strip()
+]
+if not allowed_origins:
+    allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(","),
-    allow_methods=["POST", "OPTIONS"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app$",
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["X-Warnings"],
 )
