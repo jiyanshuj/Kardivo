@@ -21,23 +21,25 @@ Registrar offices often produce ID cards by hand in design tools, which is slow 
 
 <table>
   <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/01-photo-crop.png" alt="Photo crop settings" width="100%"><br>
-      <sub><b>1. Photo crop and adjustment</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/02-form.png" alt="ID card data form" width="100%"><br>
-      <sub><b>2. Student and institution form</b></sub>
+    <td colspan="2" align="center">
+      <img src="docs/screenshots/03-preview.png" alt="ID card preview workspace" width="100%"><br>
+      <sub><b>Preview workspace: form on the left, live card on the right</b></sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="docs/screenshots/03-preview.png" alt="ID card preview workspace" width="100%"><br>
-      <sub><b>3. Card preview workspace</b></sub>
+      <img src="docs/screenshots/02-form.png" alt="Student and institution form" height="520"><br>
+      <sub><b>Student and institution form</b></sub>
     </td>
     <td align="center" width="50%">
-      <img src="docs/screenshots/04-generated-id-card.png" alt="Generated university ID card with sample data" height="360"><br>
-      <sub><b>4. Generated card (sample data)</b></sub>
+      <img src="docs/screenshots/04-generated-id-card.png" alt="Generated university ID card with sample data" height="520"><br>
+      <sub><b>Generated print-ready card (sample data)</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="docs/screenshots/01-photo-crop.png" alt="Photo crop and adjustment settings" width="100%"><br>
+      <sub><b>Photo crop, zoom and background settings</b></sub>
     </td>
   </tr>
 </table>
@@ -55,13 +57,15 @@ Registrar offices often produce ID cards by hand in design tools, which is slow 
 ## How it works
 
 ```mermaid
-flowchart LR
-    A[React UI<br/>form, camera, crop] -- multipart form --> B[FastAPI<br/>/api/generate]
-    B --> C[Validate fields<br/>and verify images]
-    C --> D[Photo pipeline<br/>face detect, crop, background]
-    D --> E[Pillow renderer<br/>300 DPI card]
-    E -- PNG --> A
-    A --> F[PDF 54 x 86 mm]
+flowchart TB
+    A["React UI<br/>form, camera, crop"] -->|multipart form| B["FastAPI<br/>/api/generate"]
+    B --> C["Validate fields<br/>and verify images"]
+    C --> D["Photo pipeline<br/>face detect, crop, background"]
+    D --> E["Pillow renderer<br/>300 DPI card"]
+    E -->|PNG or PDF| A
+
+    classDef box fill:#eef2ff,stroke:#6366f1,stroke-width:1.5px,color:#111827
+    class A,B,C,D,E box
 ```
 
 ## Technical highlights
